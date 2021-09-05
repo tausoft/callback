@@ -1,0 +1,4 @@
+navigate to 'submit form' dir with terminal and activate virtual env '.\env\Scripts\activate'
+install requrements from requirements.txt file
+navigate to 'ilexius' dir and run server with 'python manage.py runserver' command
+open development server link in browser
