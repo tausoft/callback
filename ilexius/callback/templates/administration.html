@@ -1,0 +1,180 @@
+{% load static %}
+<html>
+    <head>
+        <title>Callback administration</title>
+
+        <script type="text/javascript" src={% static 'backend/main.js' %} defer></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="{% static 'backend/style.css' %}">
+
+        <script>
+            var backend_sort_trigger = "{{ backend_sort_trigger }}";
+        </script>
+    </head>
+    <body>
+        <div class="topnav">
+            <a href="{% url 'index' %}">Callback</a>
+            <a class="active" href="{% url 'backend' %}">Backend</a>
+        </div>
+        <div style="text-align: center; padding-top: 60px;">
+            <h2>Callback administration page</h2>
+
+            <br><br/><br/>
+            
+            {% if ticket_data %}
+            <div class="row-custom">
+                <div class="column-left">
+                    <div id="no-callback" hidden>
+                        <form class="contact-form" method="POST" action="/downcallback/">
+                            {% csrf_token %}
+                            <button class="unext-enabled" onclick="sortList()">
+                                Callback time
+                            </button>
+                        </form>
+                    </div>
+                    <div id="up-callback">
+                        <form class="contact-form" method="POST" action="/downcallback/">
+                            {% csrf_token %}
+                            <button class="unext-enabled" onclick="sortList()">
+                                Callback time <i class="fa fa-sort-up"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div id="down-callback" hidden>
+                        <form class="contact-form" method="POST" action="/upcallback/">
+                            {% csrf_token %}
+                            <button class="unext-enabled" onclick="sortList()">
+                                Callback time <i class="fa fa-sort-down"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="column-right">
+                    <div id="no-sub">
+                        <form class="contact-form" method="POST" action="/downsub/">
+                            {% csrf_token %}
+                            <button class="unext-enabled" onclick="sortList()">
+                                Submission time
+                            </button>
+                        </form>
+                    </div>
+                    <div id="up-sub" hidden>
+                        <form class="contact-form" method="POST" action="/downsub/">
+                            {% csrf_token %}
+                            <button class="unext-enabled" onclick="sortList()">
+                                Submission time   <i class="fa fa-sort-up"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div id="down-sub" hidden>
+                        <form class="contact-form" method="POST" action="/upsub/">
+                            {% csrf_token %}
+                            <button class="unext-enabled" onclick="sortList()">
+                                Submission time <i class="fa fa-sort-down"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <br/><br/><br/><br/>
+            <div class="row" id="up-callback-div">
+            {% for item in ticket_data %}
+                <div class="columnticketsline" style="background-color: #46c2af;">
+
+                </div>
+                <div class="columntickets" name="tickets" id="{{ item.id }}" onClick="myModal(this.id); myComment(this.id);">
+
+                    <p class= "textblack_id" id="{{ item.id }}" name="id" value="{{ item.id }}" hidden>{{ item.id }}</p>
+                    <p class= "textblack" style="z-index: 4;" id="email" name="email" value="{{ item.uemail }}">{{ item.uemail }}</p>
+                    <p class= "textblack" style="z-index: 4;" id="email" name="email" value="{{ item.uemail }}">Callback: {{ item.udatetime }}</p>
+                    <p class= "textblack" style="z-index: 4;" id="datecreated" name="datecreated" value="{{ item.datecreated }}">Created: {{ item.datecreated|date:'Y-m-d H:i' }}</p>
+                    <!-- The Modal -->
+                    <div id="myModal{{ item.id }}" class="modal">
+                        <!-- Modal content -->
+                        <div class="modal-content">
+
+                            <div style="background-color: #46c2af; width: 100%; display: flex; flex-wrap: wrap;">
+                                <div class="columnbar2">
+                                    <form method="POST" class="from-group" action="{% url 'archive' item_id=item.id %}">
+                                        {% csrf_token %}
+                                        <input class="textblack" name="selected" value="" hidden></input>
+                                            <button class="buttonbar" type="submit">
+                                                <i class="fa fa-archive" style="color: #ffffff;"> archive</i>
+                                            </button>
+                                    </form>   
+                                </div>
+                            </div>
+
+                            <!-- <a href=""><span id="close" class="close">&times;</span></a> -->
+                            <div class="row">
+                                
+                                <div class="columnticketspreview">
+                                    <div class="userform">
+                                        <label for="uname">ID:</label>
+                                        <p id="uname" name="uname">{{ item.id }}</p>
+                                    </div>
+                                    <div class="userform">
+                                        <label for="uname">Name:</label>
+                                        <p id="uname" name="uname">{{ item.uname }}</p>
+                                    </div>
+                                    <div class="userform">
+                                        <label for="uname">Phone:</label>
+                                        <p id="uname" name="uname">{{ item.uphone }}</p>
+                                    </div>
+                                    <div class="userform">
+                                        <label for="uname">Company:</label>
+                                        <p id="uname" name="uname">{{ item.ucompany }}</p>
+                                    </div>
+                                    <div class="userform">
+                                        <label for="uname">Email:</label>
+                                        <p id="uname" name="uname">{{ item.uemail }}</p>
+                                    </div>
+                                    <div class="userform">
+                                        <label for="uname">Callback date and time:</label>
+                                        <p id="uname" name="uname">{{ item.udatetime }}</p>
+                                    </div>
+                                    <div class="userform">
+                                        <label for="uname">Subject:</label>
+                                        <p id="uname" name="uname">{{ item.usubject }}</p>
+                                    </div>
+                                    <textarea class= "descriptionticketpreview" id="description" name="description" value="{{ item.umessage }}" readonly>{{ item.umessage }}</textarea>
+                                    <br/><br/>
+                                </div>
+                                
+                                <div class="columnticketspreview">
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <textarea class="newmessagetext" id="commentInput{{ item.id }}" rows="4" type="text" placeholder="write a comment" value="{{ item.comments }}"></textarea>
+                                        <button class="newmessagebtn" name="guest" id="{{ item.id }}"><i class="fa fa-send"></i></button>
+                                    </form>
+                                    <div  id="comment{{ item.id }}" style="text-align: center;">
+                                        <input id="item_comments{{ item.id }}" value="{{ item.comments }}" hidden>
+                                        <div id="comments{{ item.id }}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+            {% else %}
+
+            <br/><br/><br/><br/>
+            <div style="text-align:center;">
+                <i class="fa fa-smile-o" style="font-size: 62px"></i></br></br>
+                <p>No new callback requests, sit back and relax</p>
+            </div>
+
+            {% endif %}
+        </div>
+    </body>
+</html>
+
+
